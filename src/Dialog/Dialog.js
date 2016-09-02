@@ -101,6 +101,7 @@ function getStyles(props, context) {
       left: open ? 0 : -10000,
       width: '100%',
       height: '100%',
+      overflowY: 'auto',
       transition: open ?
         transitions.easeOut('0ms', 'left', '0ms') :
         transitions.easeOut('0ms', 'left', '450ms'),
@@ -193,6 +194,7 @@ class DialogInline extends Component {
       open,
       repositionOnUpdate,
       title,
+      fullScreenDialog
     } = this.props;
 
     if (!open) {
@@ -203,7 +205,7 @@ class DialogInline extends Component {
     const container = ReactDOM.findDOMNode(this);
     const dialogWindow = ReactDOM.findDOMNode(this.refs.dialogWindow);
     const dialogContent = ReactDOM.findDOMNode(this.refs.dialogContent);
-    const minPaddingTop = 16;
+    const minPaddingTop = fullScreenDialog ? 0 : 16;
 
     // Reset the height in case the window was resized.
     dialogWindow.style.height = '';
@@ -216,7 +218,7 @@ class DialogInline extends Component {
     // Vertically center the dialog window, but make sure it doesn't
     // transition to that position.
     if (repositionOnUpdate || !container.style.paddingTop) {
-      container.style.paddingTop = `${paddingTop}px`;
+      container.style.paddingTop = fullScreenDialog ? `${minPaddingTop}px`: `${paddingTop}px`;
     }
 
     // Force a height if the dialog is taller than clientHeight
@@ -231,7 +233,7 @@ class DialogInline extends Component {
         maxDialogContentHeight -= dialogContent.nextSibling.offsetHeight;
       }
 
-      dialogContent.style.maxHeight = `${maxDialogContentHeight}px`;
+      dialogContent.style.maxHeight = (_props2fullScreenDialog) ? `${clientHeight}px` : `${maxDialogContentHeight}px`;
     }
   }
 
@@ -447,6 +449,10 @@ class Dialog extends Component {
      * Overrides the inline-styles of the title's root container element.
      */
     titleStyle: PropTypes.object,
+    /**
+     * Property to reduce the padding top and make the dialog box look like fullScreenDialog
+     */
+     fullScreenDialog: PropTypes.bool
   };
 
   static contextTypes = {
